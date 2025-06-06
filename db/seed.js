@@ -9,5 +9,23 @@ await db.end();
 console.log("🌱 Database seeded.");
 
 async function seed() {
-  // TODO
-}
+  await createUser ({
+    username: "jjohnson",
+    password: "password"});
+
+  await createTask ({
+    title: "Feed Archie",
+    done: "false",
+    user_id: 1});
+
+  await createTask ({
+    title: "Grade papers",
+    done: "false",
+    user_id: 1});
+
+    await createTask({
+      title: "Order supplies",
+      done: "false",
+      user_id: 1});
+
+};
