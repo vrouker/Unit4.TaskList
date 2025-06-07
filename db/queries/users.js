@@ -12,3 +12,7 @@ export async function createUser({username, password}){
     return user[0];
 };
 
+//registerUser
+
+
+//loginUser
