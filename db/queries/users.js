@@ -1,8 +1,8 @@
 import db from "#db/client";
 
 
-//returns the created user according to the given details
-export async function createUser({username, password}){
+//registerUser
+export async function registerUser({username, password}){
     const sql = `
         INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *;
     `;
@@ -12,7 +12,12 @@ export async function createUser({username, password}){
     return user[0];
 };
 
-//registerUser
-
 
 //loginUser
+export async function loginUser({username}){
+    const sql = `SELECT * FROM users WHERE username = $1;`;
+
+    const {rows: [user]} = await db.query(sql, [username]);
+
+    return user;
+};
