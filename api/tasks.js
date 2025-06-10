@@ -7,19 +7,20 @@ import { verifyToken } from "./users.js";
 
 
 
+
 //POST /tasks
-router.route("/").post(async(req,res)=>{
+router.route("/").post(verifyToken, async(req,res)=>{
     if (!req.body){
         return res.status(400).send({error: `Missing req.body`})
     };
 
-    const {title, done} = req.body;
+    const {title, done, user_id} = req.body;
 
     if (!title || !done){
         return res.status(400).send({error: `Missing required fields.`});
     };
 
-    const task = await createTask({title, done});
+    const task = await createTask({title, done, user_id});
 
     res.status(201).send(task);
 });
@@ -27,36 +28,39 @@ router.route("/").post(async(req,res)=>{
 
 
 //GET /tasks
-router.route("/", verifyToken).get(async(req,res)=>{
+router.route("/").get(verifyToken, async(req,res)=>{
+    if(!verifyToken){
+        return res.status(400).send(`Not authorized.`)
+    }
     const tasks = await getALLTasks();
     res.send(tasks);
 });
 
 
 //PUT /tasks/:id
-router.route("/:id").post(async(req,res)=>{
+router.route("/:id").post( verifyToken, async(req,res)=>{
     const id = req.params.id;
 
     if(!req.body){
         return res.status(400).send({error: `Missing req.body`})
     };
 
-    const {title, done} = req.body;
+    const {title, done, user_id} = req.body;
 
-    if(!title || !done){
+    if(!title || !done || !user_id){
         return res.status(400).send({error: `Missing required fields.`})
     };
 
     const task = await updateTask(id);
 
-    const updatedTask = await updateTask({id, title, done});
+    const updatedTask = await updateTask({id, title, done, user_id});
 
     res.send({updatedTask});
 });
 
 
 //DELETE /tasks/:id
-router.route("/:id").delete(async(req,res)=>{
+router.route("/:id").delete( verifyToken, async(req,res)=>{
     const id = req.params.id;
 
     if (!Number.isInteger(id) && id <0){

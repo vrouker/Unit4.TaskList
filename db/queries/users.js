@@ -1,8 +1,10 @@
 import db from "#db/client";
 
 
+
 //registerUser
 export async function registerUser({username, password}){
+    
     const sql = `
         INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *;
     `;

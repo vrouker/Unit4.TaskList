@@ -7,13 +7,17 @@ import jwt from "jsonwebtoken";
 import { registerUser, loginUser } from "#db/queries/users";
 
 
-export const verifyToken = ()=>{
-    const authHeader = req.headers[`Autherization`];
-    const token = authHeader.split(` `)[1];
+//verifyToken does not link to the user.id and passwords do not hash when being saved
+export const verifyToken = (req, res, next) => {
+    if (!req.headers[`authorization`]){return res.status(403).send(`No token provided.`)};
+    const authHeader = req.headers['authorization'];
+    const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
 };
+
+
 
 
 //POST /users/register
@@ -23,7 +27,7 @@ router.route("/register").post(async(req,res)=>{
     try{
         const hashedpassword = await bcrypt.hash(password, 5);
 
-        const newUser = await registerUser({username, password});
+        const newUser = await registerUser({username, password:hashedpassword});
 
 
         if (!newUser){
@@ -54,11 +58,9 @@ router.route("/login").post(async(req,res)=>{
 
         if (!passwordMatch){
             return res.status(401).send(`Not authorized.`);
-
         };
 
         const token = jwt.sign({id: userInfo.id, username: userInfo.username}, process.env.JWT_SECRET);
-        console.log(token);
 
         res.status(201).send(token);
         
