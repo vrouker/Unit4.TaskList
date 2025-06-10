@@ -10,6 +10,9 @@ import { verifyToken } from "./users.js";
 
 //POST /tasks
 router.route("/").post(verifyToken, async(req,res)=>{
+    if (!verifyToken){
+        return res.status(403).send(`Please log in to access the tasks.`)
+    }
     if (!req.body){
         return res.status(400).send({error: `Missing req.body`})
     };
@@ -39,6 +42,10 @@ router.route("/").get(verifyToken, async(req,res)=>{
 
 //PUT /tasks/:id
 router.route("/:id").post( verifyToken, async(req,res)=>{
+    if (!verifyToken){
+        return res.status(403).send(`Please log in to access the tasks.`)
+    }
+
     const id = req.params.id;
 
     if(!req.body){
@@ -61,6 +68,10 @@ router.route("/:id").post( verifyToken, async(req,res)=>{
 
 //DELETE /tasks/:id
 router.route("/:id").delete( verifyToken, async(req,res)=>{
+    if (!verifyToken){
+        return res.status(403).send(`Please log in to access the tasks.`)
+    }
+    
     const id = req.params.id;
 
     if (!Number.isInteger(id) && id <0){

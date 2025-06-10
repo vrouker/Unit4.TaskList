@@ -9,7 +9,7 @@ import { registerUser, loginUser } from "#db/queries/users";
 
 //verifyToken does not link to the user.id and passwords do not hash when being saved
 export const verifyToken = (req, res, next) => {
-    if (!req.headers[`authorization`]){return res.status(403).send(`No token provided.`)};
+    if (!req.headers[`authorization`]){return res.status(401).send(`No token provided.`)};
     const authHeader = req.headers['authorization'];
     const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
